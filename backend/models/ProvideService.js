@@ -11,7 +11,7 @@ router.post('/services', async (req, res) => {
 
     try {
         const query = `
-            INSERT INTO provideservice (tasker_Profile_Id, service_Id, experience, hourlyRate, createdAt)
+            INSERT INTO provideservice (tasker_Profile_Id, service_Id, experience, hourly_rate, createdAt)
             VALUES (?, ?, ?, ?, CURRENT_TIMESTAMP)
 `       ;
 

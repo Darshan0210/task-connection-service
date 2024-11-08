@@ -1,4 +1,7 @@
 
+/*<Route path="/MyBooking" element={<MyBooking />} />
+            <Route path="/payment" element={<Payment />} /> */
+
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Home from './pages/Home';
@@ -67,8 +70,7 @@ function App() {
             <Route path="/logout" element={<Logout />} ></Route>
             <Route path="/authlanding" element={<AuthLoading />} />
             <Route path="/Taskers" element={<Taskers />} />
-            <Route path="/MyBooking" element={<MyBooking />} />
-            <Route path="/payment" element={<Payment />} />
+            
 
             {/* Protected Routes */}
             <Route 
