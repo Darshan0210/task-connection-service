@@ -15,18 +15,18 @@ router.get('/Taskers', async (req, res) => {
   try {
     const query = `
       SELECT 
-        tp.tasker_profile_id AS tasker_Profile_Id, 
+        ps.tasker_Profile_Id AS tasker_Profile_Id, 
         CONCAT(u.firstname, ' ', u.lastname) AS taskerName,
         ps.experience, 
-        ps.hourly_rate AS hourlyRate
+        ps.hourlyRate AS hourlyRate
       FROM 
-        ProvideService ps
+        provideservice ps
       JOIN 
-        TaskerProfile tp ON ps.tasker_profile_id = tp.tasker_profile_id
+        TaskerProfile tp ON ps.tasker_Profile_Id = tp.tasker_Profile_Id
       JOIN 
         users u ON tp.id = u.id
       WHERE 
-        ps.service_id = ?`;
+        ps.service_Id = ?`;
    
     db.query(query, [serviceId], (err, results) => {
       if (err) {

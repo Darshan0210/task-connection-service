@@ -23,8 +23,8 @@ router.post('/TaskerProfile', upload.single('image'), async (req, res) => {
 
     // Insert or update TaskerProfile
     const query = `
-      INSERT INTO TaskerProfile (id, bio, area, city, state, pincode, availability_status, image ,created_at, updated_at)
-      VALUES (?, ?, ?, ?, ?, ?, 1, ?,NOW(), NOW())
+      INSERT INTO taskerprofile (id, bio, area, city, state, pincode, availability_status, image, created_at, updated_at)
+      VALUES (?, ?, ?, ?, ?, ?, 1, ?, NOW(), NOW())
       ON DUPLICATE KEY UPDATE
         bio = VALUES(bio), area = VALUES(area), city = VALUES(city), state = VALUES(state), pincode = VALUES(pincode),
         updated_at = NOW(), image = VALUES(image)
@@ -35,11 +35,10 @@ router.post('/TaskerProfile', upload.single('image'), async (req, res) => {
         console.error('Error saving profile:', err);
         return res.status(500).json({ message: 'Error saving profile' });
       }
-       // Retrieve the last inserted taskerProfileId
-       const taskerProfileId = result.insertId;
+      // Retrieve the last inserted taskerProfileId
+      const taskerProfileId = result.insertId;
 
-
-       res.status(200).json({
+      res.status(200).json({
         message: 'Profile saved successfully',
         taskerProfileId, // Include the taskerProfileId in the response
       });
@@ -49,10 +48,6 @@ router.post('/TaskerProfile', upload.single('image'), async (req, res) => {
     res.status(500).json({ message: 'Error processing request' });
   }
 });
-
-  
-
-
 
 // In TaskerProfile.js (backend)
 const util = require('util'); // Import util to use promisify
@@ -65,7 +60,7 @@ router.get('/:userID', async (req, res) => {
     const { userID } = req.params;
 
     // Query the database for the profile associated with the userID
-    const rows = await query(`SELECT * FROM TaskerProfile WHERE id = ?`, [userID]);
+    const rows = await query(`SELECT * FROM taskerprofile WHERE id = ?`, [userID]);
 
     // Log the rows to verify the returned data structure
     console.log('Query Result Rows:', rows);
@@ -82,6 +77,5 @@ router.get('/:userID', async (req, res) => {
     res.status(500).json({ message: 'Error fetching profile' });
   }
 });
-
 
 module.exports = router;

@@ -49,10 +49,12 @@ app.use(bodyParser.urlencoded({ extended: true }));
 // Routes
 app.use('/api/SignUp', require('./routes/SignUp')); // Handles signup
 app.use('/api/login', require('./routes/login')); // Handles login
-//app.use('/api/TaskerProfile', require('./routes/TaskerProfile')); // Correct route path
-//app.use('/api/ProvideService', require('./routes/ProvideService')); // Correct route path
+app.use('/api/TaskerProfile', require('./models/TaskerProfile')); // Correct route path
+app.use('/api/ProvideService', require('./models/ProvideService')); // Correct route path
 app.use('/api/Tasker', require('./routes/Taskers')); // Correct route path
+app.use('/api', require('./routes/MyBooking')); // Correct route path
 app.use('/api/payment', require('./routes/payment')); // Correct route path
+app.use('/api', require('./models/Insurance'));
 app.use('/api', bookingRoutes); // Correct route path
 
 // Error handling middleware (optional)
