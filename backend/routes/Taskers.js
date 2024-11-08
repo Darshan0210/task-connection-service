@@ -18,7 +18,9 @@ router.get('/Taskers', async (req, res) => {
         ps.tasker_Profile_Id AS tasker_Profile_Id, 
         CONCAT(u.firstname, ' ', u.lastname) AS taskerName,
         ps.experience, 
-        ps.hourlyRate AS hourlyRate
+        ps.hourly_rate AS hourlyRate,
+        tp.image AS taskerImage
+
       FROM 
         provideservice ps
       JOIN 
