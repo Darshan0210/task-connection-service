@@ -1,12 +1,11 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { FaHome, FaTasks, FaMoneyBillAlt, FaStar, FaUserCircle, FaSignOutAlt } from 'react-icons/fa';
+import { FaHome, FaTasks, FaMoneyBillAlt, FaStar, FaUserCircle, FaSignOutAlt, FaShieldAlt } from 'react-icons/fa';
 import AutomotiveServicesImage from './images/AutomotiveServicesImage.png';
 import HealthWellnessImage from './images/HealthWellnessImage.png';
 import EventServicesImage from './images/EventServicesImage.jpg';
 import PersonalServicesImage from './images/PersonalServicesImage.jpg';
 import HomeServicesImage from './images/HomeServicesImage.jpeg';
-
 
 function TaskerDashboard() {
   return (
@@ -36,6 +35,10 @@ function TaskerDashboard() {
             <Link to="/profile">My Profile</Link>
           </li>
           <li className="flex items-center px-4 py-2 hover:bg-blue-700 rounded">
+            <FaShieldAlt className="mr-2" />
+            <Link to="/Insurance">Insurance</Link>
+          </li>
+          <li className="flex items-center px-4 py-2 hover:bg-blue-700 rounded">
             <FaSignOutAlt className="mr-2" />
             <Link to="/logout">Logout</Link>
           </li>
@@ -47,7 +50,6 @@ function TaskerDashboard() {
         <h1 className="text-2xl font-bold mb-8">Choose a Service to Get Started</h1>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-          {/* Link each service to its respective sub-category component */}
           <Link to="/home-services" className="group">
             <div className="bg-white shadow-lg rounded-lg overflow-hidden transition-transform transform group-hover:scale-105">
               <img src={HomeServicesImage} alt="Home Services" className="w-full h-56 object-cover" />

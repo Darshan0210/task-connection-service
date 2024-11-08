@@ -55,7 +55,9 @@ app.use('/api/TaskerProfile', require('./models/TaskerProfile')); // Correct rou
 app.use('/api/ProvideService', require('./models/ProvideService')); // Correct route path
 
 app.use('/api/Tasker', require('./routes/Taskers')); // Correct route path
+app.use('/api', require('./routes/MyBooking')); // Correct route path
 app.use('/api/payment', require('./routes/payment')); // Correct route path
+app.use('/api', require('./models/Insurance'));
 app.use('/api', bookingRoutes); // Correct route path
 // Add the userRole route
 app.use('/api', userRoleRoutes);
