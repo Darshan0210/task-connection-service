@@ -5,7 +5,6 @@ const TaskerBookings = () => {
   const [bookings, setBookings] = useState([]);
   const taskerId = sessionStorage.getItem("taskerId"); // Get the taskerId from sessionStorage
 
-  // Fetch the bookings for the tasker when the component mounts
   useEffect(() => {
     const fetchBookings = async () => {
       try {
@@ -14,19 +13,37 @@ const TaskerBookings = () => {
           return;
         }
 
-        // Make a GET request to fetch bookings for the taskerId
         const response = await axios.get('http://localhost:5000/api/tasker-bookings', {
-          params: { taskerId: taskerId }, // Pass taskerId as a query parameter
+          params: { taskerId: taskerId },
         });
 
         setBookings(response.data.bookings);
       } catch (error) {
-        console.error('Error fetching tasker bookings:', error);
+        console.error('Error fetching tasker bookings:', error.response ? error.response.data : error.message);
       }
     };
 
     fetchBookings();
   }, [taskerId]);
+
+  // Function to mark task as completed
+  const handleMarkAsCompleted = async (bookingId) => {
+    try {
+      const response = await axios.put(`http://localhost:5000/api/taskers/${taskerId}/complete`);
+
+      if (response.status === 200) {
+        setBookings((prevBookings) =>
+          prevBookings.map((booking) =>
+            booking.booking_id === bookingId
+              ? { ...booking, task_status: "COMPLETED" }
+              : booking
+          )
+        );
+      }
+    } catch (error) {
+      console.error("Error updating task status:", error.response ? error.response.data : error.message);
+    }
+  };
 
   return (
     <div className="container mx-auto my-8 p-4">
@@ -37,7 +54,7 @@ const TaskerBookings = () => {
         {bookings.length > 0 ? (
           bookings.map((booking) => (
             <div
-              key={booking.bookingId}
+              key={booking.booking_id}
               className="bg-white border border-gray-200 rounded-lg shadow-lg hover:shadow-xl transition duration-300"
             >
               <div className="p-6">
@@ -60,12 +77,14 @@ const TaskerBookings = () => {
                   <span className="text-lg font-semibold text-blue-600">
                     ${booking.total_amount.toFixed(2)}
                   </span>
-                  <button
-                    onClick={() => alert("View Booking Details")} // Replace with actual functionality
-                    className="bg-blue-500 text-white font-semibold py-2 px-4 rounded-lg hover:bg-blue-600 transition duration-300"
-                  >
-                    View Details
-                  </button>
+                  {booking.task_status === "PENDING" && (
+                    <button
+                      onClick={() => handleMarkAsCompleted(booking.booking_id)}
+                      className="bg-green-500 text-white font-semibold py-2 px-4 rounded-lg hover:bg-green-600 transition duration-300"
+                    >
+                      Finish Task
+                    </button>
+                  )}
                 </div>
               </div>
             </div>

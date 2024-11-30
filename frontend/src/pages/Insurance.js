@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
 function Insurance() {
@@ -8,21 +8,46 @@ function Insurance() {
     { type: 'Injury Protection', amount: 10000 },
     { type: 'Property Damage', amount: 7500 },
   ]);
-  const [selectedInsurance, setSelectedInsurance] = useState(null);
+  const [eligibleForInsurance, setEligibleForInsurance] = useState(false);
   const [showClaimForm, setShowClaimForm] = useState(false);
+  const [selectedInsurance, setSelectedInsurance] = useState(null);
   const [claimDetails, setClaimDetails] = useState({ description: '', amount: '' });
+  const taskerId = sessionStorage.getItem('taskerId');
+
+  // Fetch taskerId and insurance eligibility from backend on component mount
+  useEffect(() => { // Ensure no spaces or typos
+    if (taskerId) {
+      const fetchTaskerEligibility = async () => {
+        try {
+          const response = await axios.get(`http://localhost:5000/api/Insurance`, {
+            params: { taskerId } // Sending taskerId as a query parameter
+          });
   
-  // Assuming taskerID is available from a context, session, or prop
-  const taskerID = 1; // Replace this with actual tasker ID logic
+          console.log('Received response:', response.data);
+          if (response.data.eligible) {
+            setEligibleForInsurance(true);
+          } else {
+            setEligibleForInsurance(false);
+          }
+        } catch (error) {
+          console.error('Error fetching eligibility:', error);
+        }
+      };
   
-  // Handle enrollment for a selected insurance type
+      fetchTaskerEligibility();
+    } else {
+      console.log('No taskerId found in sessionStorage.');
+    }
+  }, []);
+  
+
   const handleEnrollment = async (insurance) => {
     try {
       const { type, amount } = insurance;
 
       // Send insurance enrollment data to the backend
-      const response = await axios.post('http://localhost:5000/api/Insurance', {
-        taskerID,
+      const response = await axios.post('http://localhost:5000/api/Insert', {
+        taskerID: taskerId,
         insuranceType: type,
         coverageAmount: amount,
       });
@@ -37,67 +62,65 @@ function Insurance() {
     }
   };
 
-  // Show claim form when "File a Claim" is clicked
   const handleShowClaimForm = (insuranceType) => {
     setSelectedInsurance(insuranceType);
     setShowClaimForm(true);
   };
 
-  // Handle input change for claim details
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setClaimDetails({ ...claimDetails, [name]: value });
   };
 
-  // Submit claim (this should link to backend in production)
   const handleSubmitClaim = async () => {
     try {
-      // In a real-world scenario, you'd send the claim data to the backend for processing
-      const response = await axios.post('/api/SubmitClaim', {
-        taskerID,
-        insuranceType: selectedInsurance,
-        description: claimDetails.description,
-        amount: claimDetails.amount,
+      // Ensure taskerId and claimDetails.amount are set correctly before sending the request
+      const response = await axios.post('http://localhost:5000/api/submitClaim', {
+        taskerId: taskerId,  // Ensure taskerId is valid and accessible
+        amount: claimDetails.amount,  // Ensure claimDetails.amount is a valid number
       });
-
+  
       if (response.status === 200) {
         alert(`Claim for ${selectedInsurance} submitted successfully!`);
-        // Reset form state
-        setShowClaimForm(false);
-        setClaimDetails({ description: '', amount: '' });
+        setShowClaimForm(false);  // Close the claim form after successful submission
+        setClaimDetails({ description: '', amount: '' });  // Reset claim details
       }
     } catch (error) {
       console.error('Error submitting claim:', error);
       alert('Error submitting claim. Please try again.');
     }
   };
-
+  
   return (
     <div className="insurance-container p-6 max-w-2xl mx-auto bg-white shadow-lg rounded-lg">
       <h2 className="text-2xl font-bold mb-4">Tasker Insurance Program</h2>
 
-      {insuranceOptions.map((insurance, index) => (
-        <div key={index} className="mb-6 p-4 bg-gray-100 rounded shadow">
-          <h3 className="text-xl font-semibold">{insurance.type}</h3>
-          <p>Coverage Amount: ${insurance.amount}</p>
+      {eligibleForInsurance ? (
+        insuranceOptions.map((insurance, index) => (
+          <div key={index} className="mb-6 p-4 bg-gray-100 rounded shadow">
+            <h3 className="text-xl font-semibold">{insurance.type}</h3>
+            <p>Coverage Amount: ${insurance.amount}</p>
 
-          {isEnrolled[insurance.type] ? (
-            <button
-              onClick={() => handleShowClaimForm(insurance.type)}
-              className="px-4 py-2 mt-4 bg-green-600 text-white rounded hover:bg-green-700"
-            >
-              File a Claim
-            </button>
-          ) : (
-            <button
-              onClick={() => handleEnrollment(insurance)}
-              className="px-4 py-2 mt-4 bg-blue-600 text-white rounded hover:bg-blue-700"
-            >
-              Enroll in {insurance.type}
-            </button>
-          )}
-        </div>
-      ))}
+            {isEnrolled[insurance.type] ? (
+              <button
+                onClick={() => handleShowClaimForm(insurance.type)}
+                className="px-4 py-2 mt-4 bg-green-600 text-white rounded hover:bg-green-700"
+              >
+                File a Claim
+              </button>
+            ) : (
+              <button
+                onClick={() => handleEnrollment(insurance)}
+                className="px-4 py-2 mt-4 bg-blue-600 text-white rounded hover:bg-blue-700"
+              >
+                Enroll in {insurance.type}
+              </button>
+            )}
+          </div>
+        ))
+      ) : (
+        <p>You are not eligible for insurance. Complete at least 2 tasks and book eligible services.</p>
+      )}
 
       {showClaimForm && (
         <div className="file-claim-section mt-6">

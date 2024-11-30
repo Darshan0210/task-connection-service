@@ -4,29 +4,33 @@ import { useLocation, useNavigate } from 'react-router-dom';
 
 function TaskersList() {
   const [taskers, setTaskers] = useState([]);
+  const [sortedByRating, setSortedByRating] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
   const serviceId = location.state?.serviceId;
 
   // Fetch taskers data
-  useEffect(() => {
-    const fetchTaskers = async () => {
-      try {
-        const response = await axios.get('http://localhost:5000/api/Tasker/Taskers', {
-          params: { serviceId },
-        });
-        setTaskers(response.data);
-      } catch (error) {
-        console.error('Error fetching taskers:', error);
-      }
-    };
+  const fetchTaskers = async () => {
+    try {
+      const response = await axios.get('http://localhost:5000/api/Tasker/Taskers', {
+        params: { serviceId, sortByRatings: sortedByRating },
+      });
+      setTaskers(response.data);
+    } catch (error) {
+      console.error('Error fetching taskers:', error);
+    }
+  };
 
+  useEffect(() => {
     if (serviceId) {
       fetchTaskers();
     }
-  }, [serviceId]);
+  }, [serviceId, sortedByRating]);
 
-  // Handle booking action
+  const handleSortByRatings = () => {
+    setSortedByRating(!sortedByRating); // Toggle sorting by ratings
+  };
+
   const handleBookTasker = (tasker) => {
     sessionStorage.setItem('taskerId', tasker.tasker_Profile_Id);
     sessionStorage.setItem('hourlyRate', tasker.hourlyRate);
@@ -38,6 +42,16 @@ function TaskersList() {
       <div className="w-full max-w-4xl bg-white p-8 rounded-lg shadow-xl">
         <h1 className="text-3xl font-bold text-center text-gray-800 mb-6">Available Taskers</h1>
 
+        {/* Sort Button */}
+        <div className="flex justify-end mb-4">
+          <button
+            onClick={handleSortByRatings}
+            className="bg-indigo-500 text-white px-4 py-2 rounded hover:bg-indigo-600 transition duration-300"
+          >
+            {sortedByRating ? 'Show Default Order' : 'Sort by Ratings'}
+          </button>
+        </div>
+
         {/* Taskers List - Horizontal Layout */}
         <div className="taskers-container overflow-x-auto">
           <div className="flex space-x-6">
@@ -48,7 +62,7 @@ function TaskersList() {
                   className="tasker-card flex-none bg-white p-4 rounded-lg shadow-lg w-64 transition transform hover:scale-105 hover:shadow-2xl"
                 >
                   <img
-                    src={`http://localhost:5000/${tasker.taskerImage}`} // Tasker Image
+                    src={`http://localhost:5000/${tasker.taskerImage}`}
                     alt={`${tasker.taskerName}'s profile`}
                     className="tasker-image w-full h-48 object-cover rounded-md mb-4"
                   />
@@ -56,6 +70,7 @@ function TaskersList() {
                     <h2 className="text-xl font-semibold text-gray-800">{tasker.taskerName}</h2>
                     <p className="text-gray-600 mt-2">Experience: {tasker.experience} years</p>
                     <p className="text-gray-600">Hourly Rate: ${tasker.hourlyRate}</p>
+                    <p className="text-gray-600">Rating: {tasker.averageRating?.toFixed(1)}</p>
                     <button
                       onClick={() => handleBookTasker(tasker)}
                       className="book-button mt-4 w-full bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition duration-300"

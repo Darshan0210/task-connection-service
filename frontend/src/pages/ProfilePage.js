@@ -7,28 +7,27 @@ function TaskerProfile() {
   const [state, setState] = useState('');
   const [pincode, setPincode] = useState('');
   const [bio, setBio] = useState('');
+  const [isUpdated, setIsUpdated] = useState(false); // State to control success message display
   const userID = sessionStorage.getItem('userID');
   const userName = sessionStorage.getItem('name');
 
-  // Fetch profile data when the component mounts
   useEffect(() => {
     async function fetchProfile() {
       try {
         const response = await fetch(`http://localhost:5000/api/TaskerProfile/${userID}`, {
           headers: {
-            'Authorization': `Bearer ${sessionStorage.getItem('authToken')}`, // Pass JWT for authorization
+            'Authorization': `Bearer ${sessionStorage.getItem('authToken')}`,
           },
         });
         
         if (response.ok) {
           const data = await response.json();
-          // Populate fields with existing data
           setArea(data.area);
           setCity(data.city);
           setState(data.state);
           setPincode(data.pincode);
           setBio(data.bio);
-          if (data.image) setImage(data.image); // Handle image URL if stored as path
+          if (data.image) setImage(data.image);
           
         } else {
           console.log('Profile not found or user is not authorized');
@@ -61,18 +60,23 @@ function TaskerProfile() {
       const response = await fetch('http://localhost:5000/api/TaskerProfile/TaskerProfile', {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${sessionStorage.getItem('authToken')}`, // Pass JWT for authorization
+          'Authorization': `Bearer ${sessionStorage.getItem('authToken')}`,
         },
         body: formData,
       });
 
       if (response.ok) {
-        const result = await response.json(); // Get the response data
-        const taskerProfileId = result.taskerProfileId; // Retrieve the taskerProfileId from the response
-        sessionStorage.setItem('taskerProfileId', taskerProfileId); // Store the taskerProfileId in sessionStorage
-        console.log('Profile updated successfully, Tasker Profile ID:', taskerProfileId);
-        sessionStorage.setItem('role', 'tasker');  // or 'customer'
+        const result = await response.json();
+        const taskerId = result.taskerProfileId;
+        sessionStorage.setItem('taskerId', taskerId);
+        sessionStorage.setItem('role', 'tasker');
 
+        setIsUpdated(true); // Show success message
+
+        // Hide the message after 3 seconds
+        setTimeout(() => {
+          setIsUpdated(false);
+        }, 3000);
       } else {
         console.error('Error updating profile');
       }
@@ -84,20 +88,27 @@ function TaskerProfile() {
   return (
     <div className="container mx-auto p-6 max-w-lg">
       <h1 className="text-3xl font-bold text-gray-800 mb-4">{userName}'s Tasker Profile</h1>
+
+      {isUpdated && (
+        <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4" role="alert">
+          Profile updated successfully!
+        </div>
+      )}
+
       <div className="flex justify-center mb-6">
         {image ? (
           <img
-          src={typeof image === 'string' ? `http://localhost:5000/${image}` : URL.createObjectURL(image)}
-          alt="Profile"
-          className="rounded-full border-4 border-gray-300 w-32 h-32 object-cover"
-        />
-        
+            src={typeof image === 'string' ? `http://localhost:5000/${image}` : URL.createObjectURL(image)}
+            alt="Profile"
+            className="rounded-full border-4 border-gray-300 w-32 h-32 object-cover"
+          />
         ) : (
           <div className="rounded-full border-4 border-gray-300 w-32 h-32 flex items-center justify-center text-gray-500">
             Upload Image
           </div>
         )}
       </div>
+
       <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow-md">
         <div className="mb-4">
           <label className="block text-gray-700">
@@ -118,7 +129,7 @@ function TaskerProfile() {
               type="file"
               onChange={handleImageChange}
               className="mt-1 block w-full border rounded p-2"
-              required={!image} // Require only if no image is currently set
+              required={!image}
             />
           </label>
         </div>

@@ -26,10 +26,7 @@ function TaskerDashboard() {
             <FaMoneyBillAlt className="mr-2" />
             <Link to="/payments">Payments</Link>
           </li>
-          <li className="flex items-center px-4 py-2 hover:bg-blue-700 rounded">
-            <FaStar className="mr-2" />
-            <Link to="/reviews">Reviews</Link>
-          </li>
+          
           <li className="flex items-center px-4 py-2 hover:bg-blue-700 rounded">
             <FaUserCircle className="mr-2" />
             <Link to="/profile">My Profile</Link>

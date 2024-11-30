@@ -112,19 +112,21 @@ router.post('/TaskerProfile', upload.single('image'), async (req, res) => {
 
     // Insert or update TaskerProfile
     const taskerProfileQuery = `
-      INSERT INTO TaskerProfile (id, bio, area, city, state, pincode, availability_status, image, created_at, updated_at)
-      VALUES (?, ?, ?, ?, ?, ?, 1, ?, NOW(), NOW())
-      ON DUPLICATE KEY UPDATE
-        bio = VALUES(bio), area = VALUES(area), city = VALUES(city), state = VALUES(state), pincode = VALUES(pincode),
-        updated_at = NOW(), image = VALUES(image)
-    `;
-
-    db.query(taskerProfileQuery, [userID, bio, area, city, state, pincode, imagePath], async (err, result) => {
-      if (err) {
-        console.error('Error saving profile:', err);
-        return res.status(500).json({ message: 'Error saving profile' });
-      }
-
+    INSERT INTO TaskerProfile (id, bio, area, city, state, pincode, availability_status, image, created_at, updated_at)
+    VALUES (?, ?, ?, ?, ?, ?, 1, ?, NOW(), NOW())
+    ON DUPLICATE KEY UPDATE
+      bio = VALUES(bio), area = VALUES(area), city = VALUES(city), state = VALUES(state), pincode = VALUES(pincode),
+      updated_at = NOW(), image = VALUES(image)
+  `;
+  
+  db.query(taskerProfileQuery, [userID, bio, area, city, state, pincode, imagePath], async (err, result) => {
+    if (err) {
+      console.error('Error saving profile:', err);
+      return res.status(500).json({ message: 'Error saving profile' });
+    }
+    // Your success response or logic here
+  
+  
       // After successfully creating/updating the tasker profile, update the user's role
       const updateRoleQuery = `
         UPDATE users SET role = ? WHERE id = ?

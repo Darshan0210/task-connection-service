@@ -1,12 +1,10 @@
-// In your backend route (e.g., routes/booking.js)
-
 const express = require('express');
 const router = express.Router();
 const db = require('../config/db');
 
 // Endpoint to get bookings for a specific tasker
 router.get('/tasker-bookings', async (req, res) => {
-  const { taskerId } = req.query; // Accept taskerId as query parameter
+  const { taskerId } = req.query;
 
   try {
     if (!taskerId) {
@@ -24,7 +22,8 @@ router.get('/tasker-bookings', async (req, res) => {
         u.firstname AS customerFirstName,
         u.lastname AS customerLastName,
         u.phone AS customerPhone,
-        u.email AS customerEmail
+        u.email AS customerEmail,
+        b.task_status AS task_status
       FROM booking b
       JOIN users u ON b.user_id = u.id
       WHERE b.tasker_id = ?
@@ -40,6 +39,36 @@ router.get('/tasker-bookings', async (req, res) => {
     });
   } catch (error) {
     console.error('Error fetching bookings:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// Endpoint to update tasker availability status only
+router.put('/taskers/:taskerId/complete', async (req, res) => {
+  const { taskerId } = req.params;
+
+  try {
+    const updateTaskerProfileQuery = `
+      UPDATE TaskerProfile
+      SET availability_status = 1
+      WHERE tasker_profile_id = ?
+    `;
+
+    // Update tasker availability status
+    db.query(updateTaskerProfileQuery, [taskerId], (err, updateResult) => {
+      if (err) {
+        console.error('Error updating availability status in tasker profile:', err);
+        return res.status(500).json({ message: 'Error updating tasker availability status', error: err });
+      }
+
+      if (updateResult.affectedRows > 0) {
+        return res.status(200).json({ message: 'Tasker availability updated successfully' });
+      } else {
+        return res.status(404).json({ message: 'Tasker not found in tasker profile' });
+      }
+    });
+  } catch (error) {
+    console.error('Error updating tasker availability:', error);
     res.status(500).json({ message: 'Server error' });
   }
 });

@@ -9,7 +9,7 @@ function Navbar() {
         <ul className="flex space-x-6">
           <li><Link to="/services" className="text-white font-medium hover:text-yellow-300 transition-colors">Services</Link></li>
           <li><Link to="/authlanding" className="text-white font-medium hover:text-yellow-300 transition-colors">Sign Up/Sign In</Link></li>
-          <li><Link to="/become-tasker" className="text-white font-medium hover:text-yellow-300 transition-colors">Become a Tasker</Link></li>
+         
         </ul>
       </div>
     </nav>

@@ -55,12 +55,12 @@ router.get('/get-user-role', (req, res) => {
         FROM 
             users u 
         LEFT JOIN 
-            TaskerProfile tp ON u.id = tp.id 
+            TaskerProfile tp ON tp.id= u.id
         WHERE 
             u.id = ?
     `;
 
-    db.query(query, [userId], (err, results) => {
+    db.query(query, [userId], (err, results) => {  
         if (err) {
             console.error('Error fetching user role and taskerId:', err);
             return res.status(500).json({ success: false, message: 'Database error' });

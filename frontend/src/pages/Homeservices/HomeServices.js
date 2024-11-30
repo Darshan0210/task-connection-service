@@ -24,10 +24,10 @@ function HomeServices() {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        const taskerProfileId = sessionStorage.getItem('taskerId');
-
+        const taskerId = sessionStorage.getItem('taskerId');
+        console.log("taskerid:",taskerId);
         // Validate inputs
-        if (!taskerProfileId) {
+        if (!taskerId) {
             alert('Please select a service and ensure you have a valid TaskerProfile ID.');
             return;
         }
@@ -35,11 +35,12 @@ function HomeServices() {
         // Send data to backend
         try {
             const response = await axios.post('http://localhost:5000/api/ProvideService/services', {
-                taskerProfileId,   // Include taskerProfileId
+                taskerId,   // Include taskerProfileId
                 serviceId: selectedSubService.id, // Selected sub-service ID
                 experience,
                 hourlyRate
             });
+            console.log('response:',response);
             alert('Service added successfully!');
         } catch (error) {
             // Log the specific error response from the server

@@ -7,8 +7,8 @@ function HomeServices() {
 
   const subServices = [
     { id: 1, name: 'Plumbing', description: 'Plumbing services for home repairs.' },
-    { id: 2, name: 'Carpentry', description: 'Carpentry services including furniture repairs.' },
-    { id: 3, name: 'Electrical Work', description: 'Electrical services like wiring and appliance repair.' },
+    { id: 3, name: 'Carpentry', description: 'Carpentry services including furniture repairs.' },
+    { id: 2, name: 'Electrical Work', description: 'Electrical services like wiring and appliance repair.' },
     { id: 4, name: 'Housekeeping', description: 'Housekeeping services to keep your home clean.' },
     { id: 5, name: 'Laundry Services', description: 'Laundry and dry cleaning services.' }
   ];

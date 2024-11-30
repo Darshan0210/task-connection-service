@@ -33,8 +33,12 @@ import ServiceCategory from "./pages/Taskerhome"
 import MyBooking from "./pages/MyBooking"
 import Taskers from "./pages/Taskers"
 import Payment from './pages/Payment/payment';
+import Payment2 from './pages/Payment/payment2'
 import MyTasksPage from './pages/my-tasks';
 import TaskerPayments from './pages/tasker-payment';
+//import MyBooking from './pages/MyBooking.js'
+
+
 
 const checkTokenExpiration = () => {
   const expiration = sessionStorage.getItem('tokenExpiration');
@@ -72,6 +76,11 @@ function App() {
             <Route path="/logout" element={<Logout />} ></Route>
             <Route path="/authlanding" element={<AuthLoading />} />
             <Route path="/Taskers" element={<Taskers />} />
+            <Route path="/Mybooking" element={<MyBooking />} />
+            
+
+
+           
 
 
             {/* Protected Routes */}
@@ -152,6 +161,14 @@ function App() {
               element={
                 <PrivateRoute>
                   <Payment />
+                </PrivateRoute>
+              } 
+            />
+            <Route 
+              path="/payment2" 
+              element={
+                <PrivateRoute>
+                  <Payment2 />
                 </PrivateRoute>
               } 
             />

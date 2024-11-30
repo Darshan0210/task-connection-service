@@ -153,10 +153,11 @@ const FirstHomePage = () => {
     const [taskerId, setTaskerId] = useState(null); // State to store the taskerId
     const [loading, setLoading] = useState(true); // State to handle loading
     const userId = sessionStorage.getItem('userID'); // Get userId from sessionStorage
-
+    //const role = sessionStorage.getItem('');
     useEffect(() => {
         // Check if userId is available in session storage
-        if (userId) {
+        if (userId) { 
+            console.log("userID is:",userId)
             // If userId is present, fetch user role and taskerId from the backend
             fetch(`http://localhost:5000/api/get-user-role?userId=${userId}`)
                 .then((response) => {
@@ -168,6 +169,8 @@ const FirstHomePage = () => {
                 .then((data) => {
                     if (data.success) {
                         setRole(data.role); // Set the role from the response
+                        console.log('role:',data.role);
+                        sessionStorage.setItem('role', data.role);
                         setTaskerId(data.taskerId); // Set taskerId from the response
                         if (data.taskerId) {
                             sessionStorage.setItem('taskerId', data.taskerId); // Store taskerId in session storage
@@ -209,7 +212,11 @@ const FirstHomePage = () => {
                             className="bg-blue-500 text-white font-semibold py-3 px-8 rounded-lg shadow-lg hover:bg-blue-600 transition duration-300"
                             onClick={() => {
                                 // Only allow navigation if role is not 'tasker'
+                                  if (role === 'customer') {
+                                    alert('Access Denied: customers cannot provide services.');
+                                }else {
                                     navigate('/Customerhome');
+                                }  
                             }}
                         >
                             Provide Service
